@@ -44,12 +44,8 @@ export const getDefaultAdultSources = (): VideoSource[] => ADULT_SOURCES;
 
 
 
-function getEnvSubscriptions(): SourceSubscription[] {
-  if (typeof process === 'undefined' || !process.env.NEXT_PUBLIC_SUBSCRIPTION_SOURCES) {
-    return [];
-  }
-
-  const envValue = process.env.NEXT_PUBLIC_SUBSCRIPTION_SOURCES.trim();
+function getEnvSubscriptions(customValue?: string): SourceSubscription[] {
+  const envValue = (customValue || process.env.SUBSCRIPTION_SOURCES || process.env.NEXT_PUBLIC_SUBSCRIPTION_SOURCES || '').trim();
   if (!envValue) return [];
 
   // 1. Try JSON
@@ -229,6 +225,43 @@ export const settingsStore = {
 
   importSettings(jsonString: string): boolean {
     return importSettings(jsonString, (s) => this.saveSettings(s), this.getSettings());
+  },
+
+  syncEnvSubscriptions(rawEnvValue: string): void {
+    if (typeof window === 'undefined') return;
+
+    const currentSettings = this.getSettings();
+    const envSubs = getEnvSubscriptions(rawEnvValue);
+
+    if (envSubs.length === 0) return;
+
+    const mergedSubscriptions = [...currentSettings.subscriptions];
+    let changed = false;
+
+    envSubs.forEach(envSub => {
+      const existingIndex = mergedSubscriptions.findIndex(s => s.url === envSub.url);
+      if (existingIndex > -1) {
+        // Only update if something meaningful changed to avoid unnecessary re-renders
+        if (mergedSubscriptions[existingIndex].name !== envSub.name) {
+          mergedSubscriptions[existingIndex] = {
+            ...mergedSubscriptions[existingIndex],
+            name: envSub.name,
+            autoRefresh: true
+          };
+          changed = true;
+        }
+      } else {
+        mergedSubscriptions.push(envSub);
+        changed = true;
+      }
+    });
+
+    if (changed) {
+      this.saveSettings({
+        ...currentSettings,
+        subscriptions: mergedSubscriptions
+      });
+    }
   },
 
   resetToDefaults(): void {
