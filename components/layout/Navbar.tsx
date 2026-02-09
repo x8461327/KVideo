@@ -43,6 +43,16 @@ export function Navbar({ onReset, isPremiumMode = false }: NavbarProps) {
                         </Link>
 
                         <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                            {/* --- 新增 Premium 按鈕 --- */}
+                            <a
+                                href="https://cc7.cc.cd"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hidden md:flex items-center justify-center px-4 py-2 rounded-[var(--radius-full)] bg-[var(--accent-color)] text-white text-sm font-bold shadow-lg hover:opacity-90 transition-all duration-200 cursor-pointer border border-[var(--glass-border)]"
+                            >
+                            獲取 Premium
+                            </a>
+                            {/* ---------------------- */}
                             <a
                                 href="https://github.com/KuekHaoYang/KVideo"
                                 target="_blank"
