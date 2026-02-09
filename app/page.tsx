@@ -54,16 +54,6 @@ function HomePage() {
           checkedSources={completedSources}
           totalSources={totalSources}
         />
-          {/* --- 新增跳轉按鈕 --- */}
-      <div className="mt-4 flex justify-center">
-        <button
-        onClick={() => window.open('https://cc7.cc.cd/premium', '_blank')}
-        className="px-6 py-2 bg-[var(--accent-color)] text-white rounded-full font-medium hover:opacity-90 transition-all shadow-lg"
-        >
-        獲取 Premium 服務
-      </button>
-      </div>
-           {/* ------------------ */}
       </div>
 
       {/* Main Content */}
